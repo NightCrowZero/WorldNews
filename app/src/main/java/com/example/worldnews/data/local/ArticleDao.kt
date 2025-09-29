@@ -13,12 +13,12 @@ interface ArticleDao {
     @Query("SELECT * FROM articles WHERE category = :category ORDER BY page, publishedAt DESC")
     suspend fun getByCategory(category: String?): List<ArticleEntity>
 
-    @Query("SELECT * FROM articles WHERE query = :query ORDER BY page, publishedAt DESC")
+    //@Query("SELECT * FROM articles WHERE query = :query ORDER BY page, publishedAt DESC")
     suspend fun getByQuery(query: String?): List<ArticleEntity>
 
     @Query("DELETE FROM articles WHERE category = :category")
     suspend fun clearCategory(category: String?)
 
-    @Query("DELETE FROM articles WHERE query = :query")
+    //@Query("DELETE FROM articles WHERE query = :query")
     suspend fun clearQuery(query: String?)
 }
