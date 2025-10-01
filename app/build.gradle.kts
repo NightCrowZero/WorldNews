@@ -47,13 +47,13 @@ dependencies {
     val glideVersion = "4.13.0"
     implementation ("com.github.bumptech.glide:glide:$glideVersion")
     kapt ("com.github.bumptech.glide:compiler:$glideVersion")
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")// Retrofit
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")// Retrofit
-    implementation("androidx.room:room-runtime:$roomVersion")// Room
-    ksp("androidx.room:room-compiler:$roomVersion") // Room
-    implementation("androidx.room:room-ktx:$roomVersion")// Room
-    implementation("androidx.navigation:navigation-compose:2.9.5")// Navigation Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")// Lifecycle ViewModel
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("androidx.navigation:navigation-compose:2.9.5")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -1,17 +1,12 @@
-# Gradle
 .gradle/
 build/
 
-# IDEA
 .idea/
 *.iml
 
-# Android
 /local.properties
 
-# Kotlin
 *.kotlin_module
 
-# Generated
 captures/
 outputs/
