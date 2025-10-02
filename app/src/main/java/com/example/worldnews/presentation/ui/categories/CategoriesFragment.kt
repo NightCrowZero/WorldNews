@@ -1,5 +1,8 @@
-package com.example.worldnews.ui.categories
+package com.example.worldnews.presentation.ui.categories
 
+import android.R
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +15,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.worldnews.data.NewsRepository
+import com.example.worldnews.data.repository.NewsRepositoryImpl
 import com.example.worldnews.data.local.AppDatabase
+import com.example.worldnews.data.remote.RetrofitInstance
+import com.example.worldnews.data.repository.AppDatabaseProvider
 import com.example.worldnews.databinding.FragmentCategoriesBinding
-import com.example.worldnews.ui.NewsViewModel
-import com.example.worldnews.ui.adapter.NewsAdapter
+import com.example.worldnews.presentation.viewmodel.NewsViewModel
+import com.example.worldnews.presentation.ui.adapter.NewsAdapter
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -27,13 +32,11 @@ class CategoriesFragment : Fragment() {
 
     private val repository by lazy {
         val dao = AppDatabase.getInstance(requireContext()).articleDao()
-        NewsRepository(dao)
-    }
 
-   /* private val viewModel: NewsViewModel by lazy {
-        ViewModelProvider(this, NewsViewModelFactory(repository))
-            .get(NewsViewModel::class.java)
-    }*/
+        val api = RetrofitInstance.api
+
+        NewsRepositoryImpl(api, dao)
+    }
 
     private lateinit var adapter: NewsAdapter
 
@@ -50,15 +53,15 @@ class CategoriesFragment : Fragment() {
         adapter = NewsAdapter { article ->
             article.url?.let { url ->
                 requireContext().startActivity(
-                    android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+                    Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 )
             }
         }
         b.rvNewsCat.layoutManager = LinearLayoutManager(requireContext())
         b.rvNewsCat.adapter = adapter
 
-        val spAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
-        spAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val spAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, categories)
+        spAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         b.spinnerCategories.adapter = spAdapter
 
         b.spinnerCategories.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -73,8 +76,6 @@ class CategoriesFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-
-        // Load more button
         b.btnLoadMoreCat.setOnClickListener {
             if (!isLoading) {
                 currentPage++
@@ -82,7 +83,6 @@ class CategoriesFragment : Fragment() {
             }
         }
 
-        // Початкове завантаження
         loadCategory(currentCategory, currentPage)
     }
 
@@ -108,7 +108,7 @@ class CategoriesFragment : Fragment() {
 }
 
 class NewsViewModelFactory(
-    private val repository: NewsRepository
+    private val repository: NewsRepositoryImpl
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
@@ -118,50 +118,3 @@ class NewsViewModelFactory(
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
-/*adapter = NewsAdapter { article ->
-    article.url?.let { url ->
-        requireContext().startActivity(
-            android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
-        )
-    }
-}
-
-b.rvNewsCat.layoutManager = LinearLayoutManager(requireContext())
-b.rvNewsCat.adapter = adapter
-
-viewLifecycleOwner.lifecycleScope.launch {
-    val articles = repository.fetchCategoryViaEverything("business", 1)
-    adapter.submitList(articles)
-}
-
-
-// viewModel.loadNews(category = "business")
-
-
-val spAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
-spAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-b.spinnerCategories.adapter = spAdapter
-
-b.spinnerCategories.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-    override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-        val cat = categories[pos]
-        vm.loadCategory(cat, refresh = true)
-    }
-    override fun onNothingSelected(parent: AdapterView<*>) {}
-
-
-b.btnLoadMoreCat.setOnClickListener { vm.loadMore() }
-
-viewLifecycleOwner.lifecycleScope.launch {
-    vm.articles.collectLatest { list ->
-        adapter.submitList(list)
-    }
-}
-}
-
-override fun onDestroyView() {
-super.onDestroyView()
-_b = null
-}
-}*/

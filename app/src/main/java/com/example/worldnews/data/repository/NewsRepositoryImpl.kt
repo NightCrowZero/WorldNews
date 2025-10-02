@@ -1,40 +1,42 @@
-package com.example.worldnews.data
+package com.example.worldnews.data.repository
 
 import android.util.Log
-import com.example.worldnews.BuildConfig
 import com.example.worldnews.data.local.ArticleDao
 import com.example.worldnews.data.local.ArticleEntity
 import com.example.worldnews.data.remote.ArticleDto
+import com.example.worldnews.data.remote.NewsApi
 import com.example.worldnews.data.remote.RetrofitInstance
+import com.example.worldnews.domain.repository.NewsRepository
 
-class NewsRepository(private val dao: ArticleDao) {
+class NewsRepositoryImpl(
+    private val api: NewsApi,
+    private val dao: ArticleDao
+) : NewsRepository {
 
-    private val api = RetrofitInstance.api
-
-    suspend fun getCachedByCategory(category: String?): List<ArticleEntity> =
+    override suspend fun getCachedByCategory(category: String?): List<ArticleEntity> =
         dao.getByCategory(category)
 
-    suspend fun getCachedHeadlines(): List<ArticleEntity> =
+    override suspend fun getCachedHeadlines(): List<ArticleEntity> =
         dao.getTopHeadlines()
 
 
-    suspend fun getCachedByQuery(query: String): List<ArticleEntity> =
+    override suspend fun getCachedByQuery(query: String): List<ArticleEntity> =
         dao.getByQuery(query)
 
-    suspend fun fetchSearch(query: String, page: Int): List<ArticleEntity> {
+    override suspend fun fetchSearch(query: String, page: Int): List<ArticleEntity> {
 
-        val resp = api.searchNews(query = query, page = page,)  //apiKey = BuildConfig.NEWS_API_KEY
+        val resp = api.searchNews(query = query, page = page,)
 
         val articles = resp.body()?.articles?.map { dto ->
             dto.toEntity(category = null, query = query, page = page)
         } ?: emptyList()
 
-        dao.insertAll(articles) // cash to Room
+        dao.insertAll(articles)
 
         return articles
     }
 
-    suspend fun fetchCategoryViaEverything(category: String, page: Int): List<ArticleEntity> {
+    override suspend fun fetchCategoryViaEverything(category: String, page: Int): List<ArticleEntity> {
 
         val resp = api.searchNews(
 
@@ -55,13 +57,23 @@ class NewsRepository(private val dao: ArticleDao) {
 
     }
 
-    suspend fun fetchHeadlines(category: String?, page: Int): List<ArticleEntity> {
+    override suspend fun getTopHeadlines(
+        country: String,
+        category: String?
+    ): List<ArticleEntity> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun searchNews(query: String): List<ArticleEntity> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun fetchHeadlines(category: String?, page: Int): List<ArticleEntity> {
 
         val resp = api.getTopHeadlines(
             country = "us",
             category = category,
             page = page,
-            //apiKey = BuildConfig.NEWS_API_KEY
         )
 
         Log.d("API_TEST", "Response code: ${resp.code()}, body: ${resp.body()}")
@@ -76,7 +88,7 @@ class NewsRepository(private val dao: ArticleDao) {
 
     }
 
-    suspend fun insertArticles(articles: List<ArticleEntity>) {
+    override suspend fun insertArticles(articles: List<ArticleEntity>) {
         dao.insertAll(articles)
     }
 

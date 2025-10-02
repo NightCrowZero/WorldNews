@@ -34,33 +34,3 @@ object RetrofitInstance {
             .create(NewsApi::class.java)
     }
 }
-
-
-/*
-object RetrofitInstance {
-
-    private val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val original = chain.request()
-            val originalHttpUrl = original.url()
-
-            val newUrl = originalHttpUrl.newBuilder()
-                .addQueryParameter("apiKey", BuildConfig.NEWS_API_KEY)
-                .build()
-
-            val newRequest = original.newBuilder().url(newUrl).build()
-            chain.proceed(newRequest)
-        }
-        .build()
-
-    private val retrofit by lazy {
-
-        Retrofit.Builder()
-            .baseUrl("https://newsapi.org/v2/")
-            .client(client) // додаємо клієнт з interceptor
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-    val api: NewsApi by lazy { retrofit.create(NewsApi::class.java)  }
-}
-*/

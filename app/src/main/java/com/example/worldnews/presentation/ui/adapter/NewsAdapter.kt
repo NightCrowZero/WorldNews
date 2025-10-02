@@ -1,4 +1,4 @@
-package com.example.worldnews.ui.adapter
+package com.example.worldnews.presentation.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -24,8 +24,8 @@ class NewsAdapter(
 
             Glide.with(binding.ivArticle.context)
                 .load(article.urlToImage)
-                .placeholder(R.drawable.placeholder_image) // опційно, поки завантажується
-                .error(R.drawable.error_image) // опційно, якщо помилка
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.error_image)
                 .into(binding.ivArticle)
 
             binding.root.setOnClickListener {

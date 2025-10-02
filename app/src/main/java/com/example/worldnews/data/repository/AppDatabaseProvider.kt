@@ -1,4 +1,4 @@
-package com.example.worldnews.data
+package com.example.worldnews.data.repository
 
 import android.content.Context
 import com.example.worldnews.data.local.AppDatabase

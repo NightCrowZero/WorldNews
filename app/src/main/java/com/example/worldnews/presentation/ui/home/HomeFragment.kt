@@ -1,5 +1,7 @@
-package com.example.worldnews.ui.home
+package com.example.worldnews.presentation.ui.home
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldnews.databinding.FragmentHomeBinding
-import com.example.worldnews.ui.adapter.NewsAdapter
+import com.example.worldnews.presentation.ui.adapter.NewsAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -41,9 +43,9 @@ class HomeFragment : Fragment() {
         adapter = NewsAdapter { article ->
             article.url?.let { url ->
                 requireContext().startActivity(
-                    android.content.Intent(
-                        android.content.Intent.ACTION_VIEW,
-                        android.net.Uri.parse(url)
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(url)
                     )
                 )
             }

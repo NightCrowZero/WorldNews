@@ -1,12 +1,13 @@
-package com.example.worldnews.ui.categories
+package com.example.worldnews.presentation.ui.categories
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.worldnews.data.AppDatabaseProvider
-import com.example.worldnews.data.NewsRepository
+import com.example.worldnews.data.repository.AppDatabaseProvider
+import com.example.worldnews.data.repository.NewsRepositoryImpl
 import com.example.worldnews.data.local.ArticleEntity
+import com.example.worldnews.data.remote.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,7 +16,9 @@ class CategoriesViewModel(application: Application) : AndroidViewModel(applicati
 
     private val dao = AppDatabaseProvider.get(application).articleDao()
 
-    private val repo = NewsRepository(dao)
+    private val api = RetrofitInstance.api
+
+    private val repo = NewsRepositoryImpl(api, dao)
 
     private val _articles = MutableStateFlow<List<ArticleEntity>>(emptyList())
     val articles: StateFlow<List<ArticleEntity>> = _articles

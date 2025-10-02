@@ -1,14 +1,14 @@
-package com.example.worldnews.ui
+package com.example.worldnews.presentation.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.example.worldnews.data.NewsRepository
-import com.example.worldnews.data.Article
+import com.example.worldnews.data.repository.NewsRepositoryImpl
+import com.example.worldnews.data.repository.Article
 import com.example.worldnews.data.local.ArticleEntity
 import kotlinx.coroutines.launch
 
 
-class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
+class NewsViewModel(private val repository: NewsRepositoryImpl) : ViewModel() {
 
     private val _articles = MutableLiveData<List<ArticleEntity>>()
     val articles: LiveData<List<ArticleEntity>> = _articles
@@ -21,7 +21,7 @@ class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
 
                 val entities: List<ArticleEntity> = repository.fetchHeadlines(category, page)
 
-                repository.insertArticles(entities) // savr to Room
+                repository.insertArticles(entities)
 
                 _articles.postValue(entities)
 
