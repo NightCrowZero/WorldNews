@@ -11,8 +11,9 @@ import com.example.worldnews.data.remote.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoriesViewModel(application: Application) : AndroidViewModel(application) {
+class CategoriesViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
     private val dao = AppDatabaseProvider.get(application).articleDao()
 

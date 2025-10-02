@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldnews.data.repository.NewsRepositoryImpl
 import com.example.worldnews.data.local.AppDatabase
 import com.example.worldnews.data.remote.RetrofitInstance
-import com.example.worldnews.data.repository.AppDatabaseProvider
 import com.example.worldnews.databinding.FragmentCategoriesBinding
 import com.example.worldnews.presentation.viewmodel.NewsViewModel
 import com.example.worldnews.presentation.ui.adapter.NewsAdapter
