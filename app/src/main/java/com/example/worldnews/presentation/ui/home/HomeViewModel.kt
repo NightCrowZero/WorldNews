@@ -40,7 +40,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
             isLoading = true
             if (refresh) currentPage = 1
-            currentQuery = "" // очищаємо пошук, щоб показати всі новини
+            currentQuery = ""
 
             try {
 
