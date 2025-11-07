@@ -7,8 +7,11 @@ interface ArticleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(articles: List<ArticleEntity>)
 
-    @Query("SELECT * FROM articles ORDER BY publishedAt DESC LIMIT :limit")
-    suspend fun getTopHeadlines(limit: Int = 20): List<ArticleEntity>
+    @Query("SELECT * FROM articles ORDER BY publishedAt DESC LIMIT :limit OFFSET :offset")
+    suspend fun getPagedHeadlines(limit: Int = 20, offset: Int = 0): List<ArticleEntity>
+
+    @Query("DELETE FROM articles WHERE query = :query")
+    suspend fun clearArticlesForQuery(query: String)
 
     @Query("SELECT * FROM articles WHERE category = :category ORDER BY page, publishedAt DESC")
     suspend fun getByCategory(category: String?): List<ArticleEntity>

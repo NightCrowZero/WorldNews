@@ -1,123 +1,78 @@
 package com.example.worldnews.presentation.ui.home
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.worldnews.data.repository.AppDatabaseProvider
-import com.example.worldnews.data.repository.NewsRepositoryImpl
 import com.example.worldnews.data.local.ArticleEntity
-import com.example.worldnews.data.remote.RetrofitInstance
+import com.example.worldnews.data.repository.NewsRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val dao = AppDatabaseProvider.get(application).articleDao()
-
-    private val api = RetrofitInstance.api
-
-    private val repo = NewsRepositoryImpl(api, dao)
+class HomeViewModel (
+    private val repo: NewsRepositoryImpl
+) : ViewModel() {
 
     private val _articles = MutableStateFlow<List<ArticleEntity>>(emptyList())
+    val articles: StateFlow<List<ArticleEntity>> get() = _articles
 
-    val articles: StateFlow<List<ArticleEntity>> = _articles
-
-    private var currentQuery: String = ""
-
-    private var currentPage: Int = 1
-
+    private var currentPage = 1
     private var isLoading = false
 
-    init {
-        loadHeadlines(refresh = true)
-    }
-
     fun loadHeadlines(refresh: Boolean = false) {
-
         if (isLoading) return
         viewModelScope.launch {
-
             isLoading = true
             if (refresh) currentPage = 1
-            currentQuery = ""
 
             try {
-
-                val fetched = repo.fetchHeadlines(category = null, page = currentPage)
-                if (fetched.isNotEmpty()) {
-
-                    repo.insertArticles(fetched)
-
-                }
-            } catch (e: Exception) {
-
-                println("loadHeadlines error: ${e.message}")
-
-            }
-
-            _articles.value = repo.getCachedHeadlines()
-
-            isLoading = false
-
-        }
-    }
-
-    fun search(query: String, refresh: Boolean = false) {
-
-        if (isLoading) return
-        viewModelScope.launch {
-
-            isLoading = true
-            if (refresh) currentPage = 1
-            currentQuery = query
-
-            try {
-
-                val fetched = repo.fetchSearch(query, page = currentPage)
-                if (fetched.isNotEmpty()) {
-
-                    repo.insertArticles(fetched)
-
-                }
+                val fetched = repo.fetchHeadlines(page = currentPage)
+                if (fetched.isNotEmpty()) repo.insertArticles(fetched)
             } catch (_: Exception) {}
 
-            _articles.value = repo.getCachedByQuery(query)
-
+            _articles.value = repo.getCachedHeadlinesPaged(currentPage, pageSize)
             isLoading = false
-
         }
     }
+
+    private val pageSize = 20
 
     fun loadMore() {
         if (isLoading) return
-        viewModelScope.launch {
 
+        viewModelScope.launch {
             isLoading = true
             currentPage++
 
-            if (currentQuery.isNotBlank()) {
+            try {
+                val fetched = repo.fetchHeadlines(page = currentPage)
+                if (fetched.isNotEmpty()) repo.insertArticles(fetched)
+            } catch (_: Exception) {  }
 
-                try {
-
-                    val fetched = repo.fetchSearch(currentQuery, page = currentPage)
-                    if (fetched.isNotEmpty()) repo.insertArticles(fetched)
-
-                } catch (_: Exception) {}
-                _articles.value = repo.getCachedByQuery(currentQuery)
-            } else {
-
-                try {
-
-                    val fetched = repo.fetchHeadlines(category = null, page = currentPage)
-                    if (fetched.isNotEmpty()) repo.insertArticles(fetched)
-
-                } catch (_: Exception) {}
-                _articles.value = repo.getCachedHeadlines()
-            }
+            val fetched = repo.fetchHeadlines(category = null, page = currentPage)
+            if (fetched.isNotEmpty()) repo.insertArticles(fetched)
+            val newArticles = repo.getCachedHeadlinesPaged(page = currentPage)
+            _articles.value += newArticles
+            //_articles.value = repo.getCachedHeadlinesPaged(currentPage, pageSize)
 
             isLoading = false
+        }
+    }
 
+
+    fun search(query: String, refresh: Boolean = false) {
+        if (isLoading) return
+        viewModelScope.launch {
+            isLoading = true
+            if (refresh) currentPage = 1
+
+            try {
+                val fetched = repo.fetchSearch(query, page = currentPage)
+                if (refresh) repo.clearSearchCache(query)
+                if (fetched.isNotEmpty()) repo.insertArticles(fetched)
+            } catch (_: Exception) {}
+
+            _articles.value = repo.getCachedByQuery(query)
+            isLoading = false
         }
     }
 }

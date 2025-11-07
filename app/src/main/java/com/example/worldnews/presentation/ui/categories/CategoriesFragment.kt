@@ -11,15 +11,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldnews.data.repository.NewsRepositoryImpl
 import com.example.worldnews.data.local.AppDatabase
 import com.example.worldnews.data.remote.RetrofitInstance
 import com.example.worldnews.databinding.FragmentCategoriesBinding
-import com.example.worldnews.presentation.viewmodel.NewsViewModel
 import com.example.worldnews.presentation.ui.adapter.NewsAdapter
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -66,7 +63,6 @@ class CategoriesFragment : Fragment() {
         b.spinnerCategories.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 val cat = categories[pos]
-                // Лоадимо категорію через новий метод репозиторію
                 viewLifecycleOwner.lifecycleScope.launch {
                     val articles = repository.fetchCategoryViaEverything(cat, 1)
                     adapter.submitList(articles)
@@ -103,17 +99,5 @@ class CategoriesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _b = null
-    }
-}
-
-class NewsViewModelFactory(
-    private val repository: NewsRepositoryImpl
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return NewsViewModel(repository) as T
-            }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

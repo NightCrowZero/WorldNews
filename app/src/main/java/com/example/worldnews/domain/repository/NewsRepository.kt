@@ -10,6 +10,6 @@ interface NewsRepository {
     suspend fun fetchSearch(query: String, page: Int): List<ArticleEntity>
     suspend fun insertArticles(articles: List<ArticleEntity>)
     suspend fun getCachedByQuery(query: String): List<ArticleEntity>
-    suspend fun getCachedHeadlines(): List<ArticleEntity>
     suspend fun getCachedByCategory(category: String?): List<ArticleEntity>
+    suspend fun clearSearchCache(query: String)
 }
