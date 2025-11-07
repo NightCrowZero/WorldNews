@@ -11,7 +11,6 @@ interface NewsApi {
         @Query("category") category: String? = null,
         @Query("page") page: Int = 1,
         @Query("pageSize") pageSize: Int = 20
-        //@Query("apiKey") apiKey: String
     ): Response<NewsResponse>
 
     @GET("v2/everything")
@@ -19,6 +18,5 @@ interface NewsApi {
         @Query("q") query: String,
         @Query("page") page: Int = 1,
         @Query("pageSize") pageSize: Int = 20
-        //@Query("apiKey") apiKey: String
     ): Response<NewsResponse>
 }

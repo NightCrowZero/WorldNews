@@ -52,7 +52,6 @@ class HomeViewModel (
             if (fetched.isNotEmpty()) repo.insertArticles(fetched)
             val newArticles = repo.getCachedHeadlinesPaged(page = currentPage)
             _articles.value += newArticles
-            //_articles.value = repo.getCachedHeadlinesPaged(currentPage, pageSize)
 
             isLoading = false
         }
