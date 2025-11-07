@@ -24,7 +24,6 @@ import kotlin.getValue
 class CategoriesFragment : Fragment() {
     private var _b: FragmentCategoriesBinding? = null
     private val b get() = _b!!
-    private val vm: CategoriesViewModel by viewModels()
 
     private val repository by lazy {
         val dao = AppDatabase.getInstance(requireContext()).articleDao()
